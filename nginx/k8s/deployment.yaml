@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login
+  namespace: ndia
+spec:
+  selector:
+    matchLabels:
+      app: login
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: login
+    spec:
+      containers:
+        - name: login
+          image: darkedges/nginx-ndia-sandbox:latest
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 443
