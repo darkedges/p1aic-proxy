@@ -28,8 +28,14 @@ async function retrieveStatic(request, pathname, ctx) {
 	let body = request.body
 	if (pathname.startsWith('/am/oauth2/access_token') && request.method === "POST") {
 		const formData = await request.formData();
-		formData.set('redirect_uri', formData.get('redirect_uri').replaceAll(`${CLOUDFLARE_SCHEME}://${CLOUDFLARE_HOST}${CLOUDFLARE_PORT}`, `${NDIS_SCHEME}://${NDIS_HOST}`))
-		body = formData
+		let a = new URLSearchParams()
+		formData.forEach((v, k) => {
+			if (k === "redirect_uri") {
+				v = v.replaceAll(`${CLOUDFLARE_SCHEME}://${CLOUDFLARE_HOST}${CLOUDFLARE_PORT}`, `${NDIS_SCHEME}://${NDIS_HOST}`)
+			}
+			a.append(k, v)
+		})
+		body = a
 	}
 	let response = await caches.default.match(request)
 	let responseClone: any = response
