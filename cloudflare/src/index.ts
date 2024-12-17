@@ -40,7 +40,11 @@ async function retrieveStatic(request, pathname, ctx) {
 			method: request.method,
 			redirect: 'manual'
 		})
-		responseClone = new Response(response.body, response)
+		var content: any = response.body
+		if (pathname.endsWith('.js')) {
+			content = (await response.text()).replaceAll(`${NDIS_SCHEME}://${NDIS_HOST}`, `${CLOUDFLARE_SCHEME}://${CLOUDFLARE_HOST}${CLOUDFLARE_PORT}`)
+		}
+		responseClone = new Response(content, response)
 		response.headers.getSetCookie().forEach((cookie) => {
 			cookie = cookie.replace(NDIS_HOST, CLOUDFLARE_HOST)
 			cookie = cookie.replace(' Secure;', '')
